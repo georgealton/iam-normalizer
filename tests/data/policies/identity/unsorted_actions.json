@@ -1,0 +1,13 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "S3:PUT",
+                "S3:GET"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:deleteitem",
+                "dynamodb:getitem",
+                "dynamodb:putitem",
+                "dynamodb:query",
+                "dynamodb:updateitem"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:*:*:table/MyTable"
+            ],
+            "Condition": {
+                "ForAllValues:StringEquals": {
+                    "dynamodb:leadingkeys": [
+                        "${cognito-identity.amazonaws.com:sub}"
+                    ]
+                }
+            }
+        }
+    ]
+}

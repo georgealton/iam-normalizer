@@ -1,0 +1,23 @@
+name: Rust Build
+on: [push]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          override: true
+      - run: |
+          cargo build --all --release
+          strip target/release/iam_normalizer
+          mv target/release/iam_normalizer target/release/iam_normalizer_amd64
