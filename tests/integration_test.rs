@@ -20,6 +20,7 @@ fn test() -> Result<()> {
                 let output = command.arg(entry.path()).output()?;
                 let result = String::from_utf8(output.stdout)?.replace(" ", "");
 
+                eprintln!("{}", String::from_utf8(output.stderr)?);
                 assert!(output.status.success());
                 assert_eq!(result, expected.replace(" ", ""));
             }

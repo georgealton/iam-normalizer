@@ -37,14 +37,12 @@ pub enum OneOrMany {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-#[serde(untagged)]
 pub enum ActionBlock {
     Action(OneOrMany),
     NotAction(OneOrMany),
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-#[serde(untagged)]
 pub enum ResourceBlock {
     Resource(OneOrMany),
     NotResource(OneOrMany),
@@ -70,7 +68,9 @@ pub struct IAMStatement {
     pub sid: Option<String>,
     pub effect: String,
     pub principal: Option<Principal>,
+    #[serde(flatten)]
     pub action: ActionBlock,
+    #[serde(flatten)]
     pub resource: ResourceBlock,
     pub condition: Option<ConditionMap>,
 }

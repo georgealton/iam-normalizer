@@ -1,0 +1,14 @@
+{
+    "Ad": "!",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "NotAction": [
+                "S3:PUT",
+                "S3:GET"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
