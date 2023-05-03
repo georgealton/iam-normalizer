@@ -13,6 +13,7 @@ fn test() -> Result<()> {
     for entry in read_dir(identity_policy_path)? {
         if let Ok(entry) = entry {
             if entry.path().is_file() {
+                println!("{:?}", entry.file_name());
                 let expected = read_to_string(expect_path.join(entry.file_name()))?;
                 let bin = Path::new("target/debug/iam_normalizer");
 
