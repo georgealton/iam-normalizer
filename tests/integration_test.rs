@@ -7,23 +7,25 @@ use std::{
 
 #[test]
 fn test() -> Result<()> {
-    let identity_policy_path = Path::new("./tests/data/policies/identity");
-    let expect_path = Path::new("./tests/data/policies/identity/expect");
+    let identity_policy_path = Path::new("./tests/data/policies/identity/");
 
     for entry in read_dir(identity_policy_path)? {
         if let Ok(entry) = entry {
-            if entry.path().is_file() {
-                println!("{:?}", entry.file_name());
-                let expected = read_to_string(expect_path.join(entry.file_name()))?;
-                let bin = Path::new("target/debug/iam_normalizer");
+            if entry.path().is_dir() {
+                let dir = entry.path();
+                let input = entry.path().join("input.json");
+                let expect = read_to_string(dir.join("expect.json"))?;
 
+                let bin = Path::new("target/debug/iam_normalizer");
                 let mut command = Command::new(bin);
-                let output = command.arg(entry.path()).output()?;
-                let result = String::from_utf8(output.stdout)?.replace(" ", "");
+                let output = command.arg(input).output()?;
+                let result = String::from_utf8(output.stdout)?
+                    .split_whitespace()
+                    .collect::<String>();
 
                 eprintln!("{}", String::from_utf8(output.stderr)?);
-                assert!(output.status.success());
-                assert_eq!(result, expected.replace(" ", ""));
+                assert!(output.status.success(), "Command Failed");
+                assert_eq!(result, expect.split_whitespace().collect::<String>());
             }
         }
     }
