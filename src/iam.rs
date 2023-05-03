@@ -48,18 +48,11 @@ pub enum ResourceBlock {
     NotResource(OneOrMany),
 }
 
-type ConditionOperator = String;
+type ConditionType = String;
 type ConditionKey = String;
-pub type ConditionMap = HashMap<ConditionOperator, ConditionKeyValue>;
+pub type ConditionValue = OneOrMany;
+pub type ConditionMap = HashMap<ConditionType, ConditionKeyValue>;
 pub type ConditionKeyValue = HashMap<ConditionKey, ConditionValue>;
-
-#[derive(Deserialize, Serialize, Clone)]
-#[serde(untagged)]
-pub enum ConditionValue {
-    Str(OneOrMany),
-    Num(serde_json::Number),
-    Bool(bool),
-}
 
 #[skip_serializing_none]
 #[derive(Deserialize, Serialize, Clone)]

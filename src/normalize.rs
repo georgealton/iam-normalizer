@@ -70,13 +70,8 @@ impl Normalize for ConditionKeyValue {
                 (
                     condition_key.to_lowercase(),
                     match condition_value {
-                        ConditionValue::Str(OneOrMany::One(value)) => {
-                            ConditionValue::Str(OneOrMany::Many(vec![value.clone()]))
-                        }
-                        ConditionValue::Str(OneOrMany::Many(value)) => {
-                            ConditionValue::Str(OneOrMany::Many(value.clone()))
-                        }
-                        _ => condition_value.clone(),
+                        OneOrMany::One(value) => OneOrMany::Many(vec![value.clone()]),
+                        OneOrMany::Many(value) => OneOrMany::Many(value.clone()),
                     },
                 )
             })
