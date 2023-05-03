@@ -6,15 +6,15 @@ use std::collections::HashMap;
 #[derive(Deserialize, Clone, Serialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct PolicyDocument {
-    pub id: Option<String>,
     pub version: Option<String>,
-    pub statement: Vec<IAMStatement>,
+    pub id: Option<String>,
+    pub statement: Vec<Statement>,
 }
 
 #[skip_serializing_none]
 #[derive(Deserialize, Serialize, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct PrincipalBlock {
+pub struct PrincipalMap {
     #[serde(rename = "AWS")]
     pub aws: Option<OneOrMany>,
     pub service: Option<OneOrMany>,
@@ -23,10 +23,10 @@ pub struct PrincipalBlock {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
-#[serde(untagged)]
-pub enum Principal {
-    Wildcard(String),
-    Principals(PrincipalBlock),
+pub enum PrincipalBlock {
+    String,
+    Principal(PrincipalMap),
+    NotPrincipal(PrincipalMap),
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -64,10 +64,11 @@ pub enum ConditionValue {
 #[skip_serializing_none]
 #[derive(Deserialize, Serialize, Clone)]
 #[serde(rename_all = "PascalCase")]
-pub struct IAMStatement {
+pub struct Statement {
     pub sid: Option<String>,
     pub effect: String,
-    pub principal: Option<Principal>,
+    #[serde(flatten)]
+    pub principal: Option<PrincipalBlock>,
     #[serde(flatten)]
     pub action: ActionBlock,
     #[serde(flatten)]

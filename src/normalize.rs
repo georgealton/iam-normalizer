@@ -50,7 +50,7 @@ impl Normalize for PolicyDocument {
     }
 }
 
-impl Normalize for IAMStatement {
+impl Normalize for Statement {
     fn normalize(&self) -> Self {
         Self {
             sid: self.sid.clone(),
@@ -94,30 +94,39 @@ impl Normalize for ConditionMap {
     }
 }
 
-impl Normalize for Principal {
+impl Normalize for PrincipalBlock {
     fn normalize(&self) -> Self {
-        fn many(principals: &[String]) -> OneOrMany {
-            let mut principals = principals.to_vec();
+        match self {
+            PrincipalBlock::String => self.clone(),
+            PrincipalBlock::Principal(principal_map) => Self::Principal(principal_map.normalize()),
+            PrincipalBlock::NotPrincipal(principal_map) => {
+                Self::NotPrincipal(principal_map.normalize())
+            }
+        }
+    }
+}
+
+impl Normalize for PrincipalMap {
+    fn normalize(&self) -> Self {
+        fn many(principal_id: &[String]) -> OneOrMany {
+            let mut principals = principal_id.to_vec();
             principals.sort();
             principals.dedup();
             OneOrMany::Many(principals)
         }
 
-        fn to_many(s: OneOrMany) -> OneOrMany {
-            match s {
+        fn to_many(principal_id: OneOrMany) -> OneOrMany {
+            match principal_id {
                 OneOrMany::One(p) => many(&[p]),
                 OneOrMany::Many(p) => many(&p),
             }
         }
 
-        match self {
-            Principal::Wildcard(_) => self.clone(),
-            Principal::Principals(pb) => Self::Principals(PrincipalBlock {
-                aws: pb.aws.clone().map(to_many),
-                service: pb.service.clone().map(to_many),
-                canonical_user: pb.canonical_user.clone().map(to_many),
-                federated: pb.federated.clone().map(to_many),
-            }),
+        Self {
+            aws: self.aws.clone().map(to_many),
+            service: self.service.clone().map(to_many),
+            canonical_user: self.canonical_user.clone().map(to_many),
+            federated: self.federated.clone().map(to_many),
         }
     }
 }
