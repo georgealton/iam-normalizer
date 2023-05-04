@@ -13,11 +13,16 @@ impl Normalize for ResourceBlock {
             OneOrMany::Many(resources)
         }
 
+        fn one_or_many(one_or_many: &OneOrMany) -> OneOrMany {
+            match one_or_many {
+                OneOrMany::One(a) => many(&[a.clone()]),
+                OneOrMany::Many(a) => many(a),
+            }
+        }
+
         match self {
-            Self::Resource(OneOrMany::One(r)) => Self::Resource(many(&[r.clone()])),
-            Self::Resource(OneOrMany::Many(r)) => Self::Resource(many(r)),
-            Self::NotResource(OneOrMany::One(r)) => Self::NotResource(many(&[r.clone()])),
-            Self::NotResource(OneOrMany::Many(r)) => Self::NotResource(many(r)),
+            Self::Resource(resources) => Self::Resource(one_or_many(resources)),
+            Self::NotResource(resources) => Self::NotResource(one_or_many(resources)),
         }
     }
 }
@@ -31,11 +36,16 @@ impl Normalize for ActionBlock {
             OneOrMany::Many(actions)
         }
 
+        fn one_or_many(one_or_many: &OneOrMany) -> OneOrMany {
+            match one_or_many {
+                OneOrMany::One(a) => many(&[a.clone()]),
+                OneOrMany::Many(a) => many(a),
+            }
+        }
+
         match self {
-            Self::Action(OneOrMany::One(a)) => Self::Action(many(&[a.clone()])),
-            Self::Action(OneOrMany::Many(a)) => Self::Action(many(a)),
-            Self::NotAction(OneOrMany::One(a)) => Self::NotAction(many(&[a.clone()])),
-            Self::NotAction(OneOrMany::Many(a)) => Self::NotAction(many(a)),
+            Self::Action(actions) => Self::Action(one_or_many(actions)),
+            Self::NotAction(actions) => Self::NotAction(one_or_many(actions)),
         }
     }
 }
@@ -91,15 +101,16 @@ impl Normalize for ConditionMap {
 
 impl Normalize for PrincipalBlock {
     fn normalize(&self) -> Self {
+        fn struct_or_string(principal_entry: &PrincipaMapOrId) -> PrincipaMapOrId {
+            match principal_entry {
+                PrincipaMapOrId::PrincipalMap(p) => PrincipaMapOrId::PrincipalMap(p.normalize()),
+                PrincipaMapOrId::PrincipalId(_) => principal_entry.clone(),
+            }
+        }
+
         match self {
-            PrincipalBlock::Principal(pb) => PrincipalBlock::Principal(match pb {
-                StructOrString::PrincipalMap(p) => StructOrString::PrincipalMap(p.normalize()),
-                StructOrString::PrincipalId(p) => StructOrString::PrincipalId(p.clone()),
-            }),
-            PrincipalBlock::NotPrincipal(pb) => PrincipalBlock::NotPrincipal(match pb {
-                StructOrString::PrincipalMap(p) => StructOrString::PrincipalMap(p.normalize()),
-                StructOrString::PrincipalId(p) => StructOrString::PrincipalId(p.clone()),
-            }),
+            Self::Principal(pb) => Self::Principal(struct_or_string(pb)),
+            Self::NotPrincipal(pb) => Self::NotPrincipal(struct_or_string(pb)),
         }
     }
 }

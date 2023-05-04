@@ -1,5 +1,5 @@
 use anyhow::Result;
-use pretty_assertions::{assert_eq, assert_ne};
+use pretty_assertions::assert_eq;
 use std::{
     fs::{read_dir, read_to_string},
     path::Path,
