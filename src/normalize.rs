@@ -92,11 +92,14 @@ impl Normalize for ConditionMap {
 impl Normalize for PrincipalBlock {
     fn normalize(&self) -> Self {
         match self {
-            PrincipalBlock::String => self.clone(),
-            PrincipalBlock::Principal(principal_map) => Self::Principal(principal_map.normalize()),
-            PrincipalBlock::NotPrincipal(principal_map) => {
-                Self::NotPrincipal(principal_map.normalize())
-            }
+            PrincipalBlock::Principal(pb) => PrincipalBlock::Principal(match pb {
+                StructOrString::PrincipalMap(p) => StructOrString::PrincipalMap(p.normalize()),
+                StructOrString::PrincipalId(p) => StructOrString::PrincipalId(p.clone()),
+            }),
+            PrincipalBlock::NotPrincipal(pb) => PrincipalBlock::NotPrincipal(match pb {
+                StructOrString::PrincipalMap(p) => StructOrString::PrincipalMap(p.normalize()),
+                StructOrString::PrincipalId(p) => StructOrString::PrincipalId(p.clone()),
+            }),
         }
     }
 }

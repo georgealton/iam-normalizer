@@ -23,10 +23,16 @@ pub struct PrincipalMap {
 }
 
 #[derive(Deserialize, Serialize, Clone)]
+#[serde(untagged)]
+pub enum StructOrString {
+    PrincipalMap(PrincipalMap),
+    PrincipalId(String),
+}
+
+#[derive(Deserialize, Serialize, Clone)]
 pub enum PrincipalBlock {
-    String,
-    Principal(PrincipalMap),
-    NotPrincipal(PrincipalMap),
+    Principal(StructOrString),
+    NotPrincipal(StructOrString),
 }
 
 #[derive(Deserialize, Serialize, Clone)]
