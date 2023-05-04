@@ -1,4 +1,5 @@
 use anyhow::Result;
+use pretty_assertions::{assert_eq, assert_ne};
 use std::{
     fs::{read_dir, read_to_string},
     path::Path,
@@ -6,7 +7,7 @@ use std::{
 };
 
 #[test]
-fn test_identity() -> Result<()> {
+fn identity_policies() -> Result<()> {
     let identity_policy_path = Path::new("./tests/data/policies/identity/");
 
     for entry in read_dir(identity_policy_path)? {
@@ -34,7 +35,7 @@ fn test_identity() -> Result<()> {
 }
 
 #[test]
-fn test_resource() -> Result<()> {
+fn resource_policies() -> Result<()> {
     let identity_policy_path = Path::new("./tests/data/policies/resource/");
 
     for entry in read_dir(identity_policy_path)? {
